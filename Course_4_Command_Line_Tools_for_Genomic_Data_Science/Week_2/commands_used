@@ -1,0 +1,72 @@
+Q1: samtools flagstats athal_wu_0_A.bam
+A1: 221372
+
+Q2: samtools view athal_wu_0_A.bam | cut -f7 | grep -c '*'
+A2: 65521
+
+Q3: samtools view athal_wu_0_A.bam | cut -f6 | grep -c 'D'
+A3: 2451
+
+Q4: samtools view athal_wu_0_A.bam | cut -f7 | grep -c '='
+A4: 150913
+
+Q5: samtools view athal_wu_0_A.bam | cut -f6 | grep -c 'N'
+A5: 0
+
+For Q6-Q10:
+# this may not work correctly, there shouldn't be any quotes around it in the .bed file
+# and it must be tab-delimited
+echo “Chr3  11777000    11794000” > aoi.bed
+
+# if it's done correctly, the following line should create an output bam file of the desired section
+samtools view -b -L aoi.bed athal_wu_0_A.bam > extracted_athal_wu_0_A.bam
+
+samtools view extracted_athal_wu_0_A.bam | head
+
+Q6: samtools flagstatss extracted_athal_wu_0_A.bam
+A6: 7081
+
+Q7: samtools view extracted_athal_wu_0_A.bam | cut -f7 | grep -c '*'
+A7: 1983
+
+Q8: samtools view extracted_athal_wu_0_A.bam | cut -f6 | grep -c 'D'
+A8: 31
+
+Q9: samtools view extracted_athal_wu_0_A.bam | cut -f7 | grep -c '='
+A9: 4670
+
+Q10: samtools view extracted_athal_wu_0_A.bam | cut -f6 | grep -c 'N'
+A10: 0
+
+Q11: samtools view -H athal_wu_0_A.bam | grep -c "SN:"
+A11: 7
+
+Q12: samtools view -H athal_wu_0_A.bam | grep "SN:" | more
+A12: 29923332
+
+Q13: samtools view -H athal_wu_0_A.bam | grep "^@PG"
+A13: stampy
+
+Q14: samtools view athal_wu_0_A.bam | head -1 | cut -f1
+A14: GAII05_0002:1:113:7822:3886#0
+
+Q15: samtools view athal_wu_0_A.bam | head
+A15: Chr3:11699950 (this is in the correct format, but still incorrect, no idea why)
+
+# Q16-20 use bedtools
+
+Q16: bedtools intersect -abam athal_wu_0_A.bam -b athal_wu_0_A_annot.gtf -bed -wo > overlaps.bedtools
+     wc -l overlaps.bed
+A16: 3101
+
+Q17: cut -f22 overlaps.bed | sort -nrk1 | grep -n "^9" | head -1
+A17: 2899 (subtract one from command output)
+
+Q18: cut -f1-12 overlaps.bed | sort -u | wc -l
+A18: 3101
+
+Q19: cut -f13-21 overlaps.bed | sort -u | wc -l
+A19: 21
+
+Q20: cut -f9 athal_wu_0_A_annot.gtf | cut -d ' ' -f1,2 | sort -u | wc -l
+A20: 4
